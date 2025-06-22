@@ -28,7 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import LoadingDots from "@/components/ui/LoadingDots";
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -112,7 +112,7 @@ export default function LoginPage() {
             {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
             <Button type="submit" className="w-full">
               {form.formState.isSubmitting ? (
-                <LoadingDots />
+                <Spinner size="small" />
               ) : form.formState.isSubmitSuccessful ? (
                 <Check />
               ) : (
