@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import z from "zod/v4";
 import Link from "next/link";
 import { ControllerRenderProps } from "react-hook-form";
 
@@ -30,7 +30,7 @@ import { signUp } from "@/lib/auth";
 
 const formSchema = z
   .object({
-    email: z.string().email("Invalid email address"),
+    email: z.email("Invalid email address"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
