@@ -4,14 +4,12 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -29,7 +27,7 @@ import {
 } from "@/components/ui/command";
 import { ChevronsUpDownIcon, CheckIcon } from "lucide-react";
 import React, { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 import z from "zod/v4";
 import { searchCity } from "@/lib/geosearch";
@@ -37,7 +35,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { subscriptionFormSchema } from "./validation";
 import { createSubscription } from "./action";
 
-export default function SubscriptionForm({ userId }: { userId: string }) {
+export default function SubscriptionForm() {
   const form = useForm({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues: {

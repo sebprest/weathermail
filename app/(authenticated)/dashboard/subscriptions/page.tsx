@@ -21,7 +21,7 @@ import SubscriptionForm from "@/app/(authenticated)/_components/subscription-for
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { redirect } from "next/navigation";
 
-function NewSubscriptionButton({ userId }: { userId: string }) {
+function NewSubscriptionButton() {
   "use client";
 
   return (
@@ -37,7 +37,7 @@ function NewSubscriptionButton({ userId }: { userId: string }) {
         <DialogDescription className="sr-only">
           Create a new subscription
         </DialogDescription>
-        <SubscriptionForm userId={userId} />
+        <SubscriptionForm />
       </DialogContent>
     </Dialog>
   );
@@ -75,7 +75,7 @@ export default async function SubscriptionsPage() {
             Manage all weather email subscriptions
           </CardDescription>
         </div>
-        <NewSubscriptionButton userId={session.user.id} />
+        <NewSubscriptionButton />
       </CardHeader>
       <CardContent>
         <SubscriptionTable subscriptions={subscriptions} />
