@@ -7,4 +7,5 @@ export const subscriptionFormSchema = z.object({
     longitude: z.number("Longitude is required"),
     name: z.string().min(1, "Location name is required"),
   }),
+  status: z.literal(["active", "inactive"])
 });

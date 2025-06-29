@@ -34,6 +34,7 @@ import { searchCity } from "@/lib/geosearch";
 import { Spinner } from "@/components/ui/spinner";
 import { subscriptionFormSchema } from "./validation";
 import { createSubscription } from "./action";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SubscriptionForm() {
   const form = useForm({
@@ -45,6 +46,7 @@ export default function SubscriptionForm() {
         longitude: 0,
         name: "",
       },
+      status: "active" as const
     },
   });
   const [locationSearch, setLocationSearch] = React.useState("");
@@ -63,8 +65,9 @@ export default function SubscriptionForm() {
   function onSubmit({
     name,
     location,
+    status,
   }: z.infer<typeof subscriptionFormSchema>) {
-    createSubscription({ name, location });
+    createSubscription({ name, location, status });
   }
 
   return (
@@ -100,8 +103,8 @@ export default function SubscriptionForm() {
                     >
                       {field.value.name
                         ? locationSuggestions.find(
-                            (location) => location.name === field.value.name
-                          )?.name
+                          (location) => location.name === field.value.name
+                        )?.name
                         : "Select city..."}
                       <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -141,6 +144,31 @@ export default function SubscriptionForm() {
                   </PopoverContent>
                 </Popover>
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="active">
+                    Active
+                  </SelectItem>
+                  <SelectItem value="inactive">
+                    Inactive
+                  </SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

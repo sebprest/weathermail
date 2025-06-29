@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 export async function createSubscription({
   name,
   location,
+  status,
 }: z.infer<typeof subscriptionFormSchema>) {
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -19,7 +20,7 @@ export async function createSubscription({
   await prisma.subscription.create({
     data: {
       name,
-      status: "active",
+      status,
       user: {
         connect: {
           id: session.user.id,
