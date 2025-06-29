@@ -1,5 +1,5 @@
 import { Cloud } from "lucide-react";
-import SignoutButton from "./SignoutButton";
+import SignoutButton from "./signout-button";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

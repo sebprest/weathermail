@@ -17,7 +17,7 @@ import {
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import SubscriptionForm from "@/app/(authenticated)/_components/subscription-form";
+import SubscriptionForm from "@/components/subscription-form";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { redirect } from "next/navigation";
 
