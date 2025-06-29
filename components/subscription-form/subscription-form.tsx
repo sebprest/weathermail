@@ -36,25 +36,23 @@ import { subscriptionFormSchema } from "./validation";
 import { createSubscription } from "./action";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export default function SubscriptionForm() {
+export default function SubscriptionForm({ closeDialog }: { closeDialog: () => void }) {
   const form = useForm({
     resolver: zodResolver(subscriptionFormSchema),
     defaultValues: {
       name: "",
-      location: {
-        latitude: 0,
-        longitude: 0,
-        name: "",
-      },
+      location: undefined,
       status: "active" as const
     },
   });
   const [locationSearch, setLocationSearch] = React.useState("");
-  const [debouncedLocationSearch] = useDebounce(locationSearch, 500);
   const [locationOpen, setLocationOpen] = React.useState(false);
   const [locationSuggestions, setLocationSuggestions] = React.useState<
     { name: string; latitude: number; longitude: number }[]
   >([]);
+  const [debouncedLocationSearch] = useDebounce(locationSearch, 500);
+
+  const { isSubmitting, isSubmitSuccessful } = form.formState
 
   useEffect(() => {
     searchCity(debouncedLocationSearch).then((locations) => {
@@ -62,12 +60,12 @@ export default function SubscriptionForm() {
     });
   }, [debouncedLocationSearch]);
 
-  function onSubmit({
+  async function onSubmit({
     name,
     location,
     status,
   }: z.infer<typeof subscriptionFormSchema>) {
-    createSubscription({ name, location, status });
+    await createSubscription({ name, location, status }).then(() => { closeDialog() });
   }
 
   return (
@@ -101,7 +99,7 @@ export default function SubscriptionForm() {
                       aria-expanded={locationOpen}
                       className="justify-between"
                     >
-                      {field.value.name
+                      {field.value?.name
                         ? locationSuggestions.find(
                           (location) => location.name === field.value.name
                         )?.name
@@ -130,7 +128,7 @@ export default function SubscriptionForm() {
                               <CheckIcon
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  field.value.name === location.name
+                                  field.value?.name === location.name
                                     ? "opacity-100"
                                     : "opacity-0"
                                 )}
@@ -175,9 +173,10 @@ export default function SubscriptionForm() {
         />
         <Button
           type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          disabled={isSubmitting || isSubmitSuccessful}
+          className="w-full"
         >
-          {form.formState.isSubmitting ? <Spinner /> : "Create Subscription"}
+          {isSubmitting ? <Spinner /> : isSubmitSuccessful ? <CheckIcon /> : "Create Subscription"}
         </Button>
       </form>
     </Form>

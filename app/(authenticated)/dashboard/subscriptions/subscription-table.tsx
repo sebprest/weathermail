@@ -71,10 +71,10 @@ export default async function SubscriptionTable({
               <StatusBadge status={subscription.status} />
             </TableCell>
             <TableCell className="flex items-center space-x-2 justify-end">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="cursor-pointer">
                 Edit
               </Button>
-              <Button variant="ghost" size="sm" className="pr-0">
+              <Button variant="ghost" size="sm" className="pr-0 cursor-pointer">
                 Delete
               </Button>
             </TableCell>

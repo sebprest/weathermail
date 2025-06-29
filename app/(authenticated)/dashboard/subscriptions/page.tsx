@@ -9,39 +9,8 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 import SubscriptionTable from "./subscription-table";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import SubscriptionForm from "@/components/subscription-form";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { redirect } from "next/navigation";
-
-function NewSubscriptionButton() {
-  "use client";
-
-  return (
-    <Dialog>
-      <Button className="cursor-pointer" asChild>
-        <DialogTrigger>
-          <Plus className="mr-2 h-4 w-4" />
-          New subscription
-        </DialogTrigger>
-      </Button>
-      <DialogContent>
-        <DialogTitle>New Subscription</DialogTitle>
-        <DialogDescription className="sr-only">
-          Create a new subscription
-        </DialogDescription>
-        <SubscriptionForm />
-      </DialogContent>
-    </Dialog>
-  );
-}
+import NewSubscriptionButton from "./new-subscription-button";
 
 export default async function SubscriptionsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
