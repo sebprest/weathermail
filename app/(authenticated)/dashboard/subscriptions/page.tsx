@@ -24,11 +24,7 @@ export default async function SubscriptionsPage() {
       userId: session.user.id,
     },
     include: {
-      location: {
-        select: {
-          name: true,
-        },
-      },
+      location: true,
     },
     orderBy: {
       createdAt: "desc",

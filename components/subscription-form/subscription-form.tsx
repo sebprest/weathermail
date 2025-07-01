@@ -33,17 +33,34 @@ import z from "zod/v4";
 import { searchCity } from "@/lib/geosearch";
 import { Spinner } from "@/components/ui/spinner";
 import { subscriptionFormSchema } from "./validation";
-import { createSubscription } from "./action";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function SubscriptionForm({ closeDialog }: { closeDialog: () => void }) {
+export default function SubscriptionForm({
+  closeDialog,
+  onSubmit,
+  defaultValues = {
+    name: "",
+    location: { latitude: 0, longitude: 0, name: "" },
+    status: "active" as const,
+  },
+  id,
+}: {
+  closeDialog: () => void;
+  onSubmit: (
+    values: z.infer<typeof subscriptionFormSchema> & { id?: string }
+  ) => Promise<void>;
+  defaultValues?: z.input<typeof subscriptionFormSchema>;
+  id?: string;
+}) {
   const form = useForm({
     resolver: zodResolver(subscriptionFormSchema),
-    defaultValues: {
-      name: "",
-      location: undefined,
-      status: "active" as const
-    },
+    defaultValues,
   });
   const [locationSearch, setLocationSearch] = React.useState("");
   const [locationOpen, setLocationOpen] = React.useState(false);
@@ -51,8 +68,9 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
     { name: string; latitude: number; longitude: number }[]
   >([]);
   const [debouncedLocationSearch] = useDebounce(locationSearch, 500);
+  console.log("DEFAULT VALUES", defaultValues);
 
-  const { isSubmitting, isSubmitSuccessful } = form.formState
+  const { isSubmitting, isSubmitSuccessful, errors } = form.formState;
 
   useEffect(() => {
     searchCity(debouncedLocationSearch).then((locations) => {
@@ -60,17 +78,19 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
     });
   }, [debouncedLocationSearch]);
 
-  async function onSubmit({
+  async function handleSubmit({
     name,
     location,
     status,
   }: z.infer<typeof subscriptionFormSchema>) {
-    await createSubscription({ name, location, status }).then(() => { closeDialog() });
+    await onSubmit({ name, location, status, id }).then(() => {
+      closeDialog();
+    });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -78,7 +98,11 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="London" {...field} />
+                <Input
+                  placeholder="London"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,11 +123,7 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
                       aria-expanded={locationOpen}
                       className="justify-between"
                     >
-                      {field.value?.name
-                        ? locationSuggestions.find(
-                          (location) => location.name === field.value.name
-                        )?.name
-                        : "Select city..."}
+                      {field.value.name || "Select city..."}
                       <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -128,7 +148,7 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
                               <CheckIcon
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  field.value?.name === location.name
+                                  field.value.name === location.name
                                     ? "opacity-100"
                                     : "opacity-0"
                                 )}
@@ -142,7 +162,7 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
                   </PopoverContent>
                 </Popover>
               </FormControl>
-              <FormMessage />
+              <FormMessage>{errors.location?.name?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -159,12 +179,8 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="active">
-                    Active
-                  </SelectItem>
-                  <SelectItem value="inactive">
-                    Inactive
-                  </SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -176,7 +192,13 @@ export default function SubscriptionForm({ closeDialog }: { closeDialog: () => v
           disabled={isSubmitting || isSubmitSuccessful}
           className="w-full"
         >
-          {isSubmitting ? <Spinner /> : isSubmitSuccessful ? <CheckIcon /> : "Create Subscription"}
+          {isSubmitting ? (
+            <Spinner />
+          ) : isSubmitSuccessful ? (
+            <CheckIcon />
+          ) : (
+            "Create Subscription"
+          )}
         </Button>
       </form>
     </Form>

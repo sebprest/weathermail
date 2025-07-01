@@ -7,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { $Enums, Subscription } from "@/lib/generated/prisma";
+import { $Enums, Prisma } from "@/lib/generated/prisma";
+import EditSubscriptionButton from "./edit-subscription-button";
 
 function StatusBadge({ status }: { status: $Enums.SubscriptionStatus }) {
   const baseStyles =
@@ -41,7 +42,9 @@ function StatusBadge({ status }: { status: $Enums.SubscriptionStatus }) {
 export default async function SubscriptionTable({
   subscriptions,
 }: {
-  subscriptions: (Subscription & { location: { name: string } })[];
+  subscriptions: Prisma.SubscriptionGetPayload<{
+    include: { location: true };
+  }>[];
 }) {
   if (!subscriptions || subscriptions.length === 0) {
     return (
@@ -71,9 +74,7 @@ export default async function SubscriptionTable({
               <StatusBadge status={subscription.status} />
             </TableCell>
             <TableCell className="flex items-center space-x-2 justify-end">
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                Edit
-              </Button>
+              <EditSubscriptionButton subscription={subscription} />
               <Button variant="ghost" size="sm" className="pr-0 cursor-pointer">
                 Delete
               </Button>

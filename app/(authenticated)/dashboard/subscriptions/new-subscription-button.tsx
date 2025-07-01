@@ -1,5 +1,6 @@
 "use client"
 import SubscriptionForm from "@/components/subscription-form";
+import { createSubscription } from "@/components/subscription-form/action";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
@@ -21,7 +22,7 @@ export default function NewSubscriptionButton() {
                 <DialogDescription className="sr-only">
                     Create a new subscription
                 </DialogDescription>
-                <SubscriptionForm closeDialog={() => { setOpen(false) }} />
+                <SubscriptionForm closeDialog={() => { setOpen(false) }} onSubmit={createSubscription} />
             </DialogContent>
         </Dialog>
     );
