@@ -41,6 +41,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const buttonText = (
+  isSubmitting: boolean,
+  isSubmitSuccessful: boolean,
+  isEdit: boolean
+) => {
+  if (isSubmitting) {
+    return <Spinner />;
+  }
+  if (isSubmitSuccessful) {
+    return <CheckIcon />;
+  }
+  if (isEdit) {
+    return "Update Subscription";
+  }
+  return "Create Subscription";
+};
+
 export default function SubscriptionForm({
   closeDialog,
   onSubmit,
@@ -68,7 +85,6 @@ export default function SubscriptionForm({
     { name: string; latitude: number; longitude: number }[]
   >([]);
   const [debouncedLocationSearch] = useDebounce(locationSearch, 500);
-  console.log("DEFAULT VALUES", defaultValues);
 
   const { isSubmitting, isSubmitSuccessful, errors } = form.formState;
 
@@ -192,13 +208,7 @@ export default function SubscriptionForm({
           disabled={isSubmitting || isSubmitSuccessful}
           className="w-full"
         >
-          {isSubmitting ? (
-            <Spinner />
-          ) : isSubmitSuccessful ? (
-            <CheckIcon />
-          ) : (
-            "Create Subscription"
-          )}
+          {buttonText(isSubmitting, isSubmitSuccessful, !!id)}
         </Button>
       </form>
     </Form>
